@@ -650,7 +650,18 @@ class Daextulma_Menu_Elements {
 							name="<?php echo esc_attr( $name ); ?>"
 					        class="daextulma-markdown-editor__textarea-content"
 					/><?php if ( ! is_null( $value ) ) { echo esc_html( $value ); } ?></textarea>
-					<div id="editor-render" class="daextulma-markdown-editor__editor-render"></div>
+					<div id="editor-render-container" class="daextulma-markdown-editor__editor-render-container">
+						<div class="daextulma-markdown-editor__editor-render-header">
+							<div class="daextulma-markdown-editor__editor-render-title">
+								<div class="daextulma-markdown-editor__editor-render-title-label"><?php esc_html_e('Preview', 'ultimate-markdown'); ?></div>
+								<div id="parser-indicator" class="daextulma-markdown-editor__editor-render-parser-name"></div>
+							</div>
+							<button id="refresh-php-preview" class="daextulma-markdown-editor__refresh-php-preview">
+								<?php $this->shared->echo_icon_svg( 'refresh-cw-01' ); ?>
+							</button>
+						</div>
+						<div id="editor-render" class="daextulma-markdown-editor__editor-render"></div>
+					</div>
 				</div>
 			</div>
 			<?php if ( '' !== $description ) : ?>

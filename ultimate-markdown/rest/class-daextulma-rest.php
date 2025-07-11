@@ -101,6 +101,17 @@ class Daextulma_Rest {
 			)
 		);
 
+		// Add the POST 'ultimate-markdown/v1/parse-markdown/' endpoint to the Rest API.
+		register_rest_route(
+			'ultimate-markdown/v1',
+			'/parse-markdown',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'rest_api_ultimate_markdown_parse_markdown_callback' ),
+				'permission_callback' => array( $this, 'rest_api_ultimate_markdown_parse_markdown_callback_permission_check' ),
+			)
+		);
+
 	}
 
 	/**
@@ -166,6 +177,10 @@ class Daextulma_Rest {
 		// Section - Capabilities -------------------------------------------------------------------------------------.
 		$options['daextulma_documents_menu_required_capability']  = $request->get_param( 'daextulma_documents_menu_required_capability' ) !== null ? sanitize_key( $request->get_param( 'daextulma_documents_menu_required_capability' ) ) : null;
 		$options['daextulma_tools_menu_required_capability']      = $request->get_param( 'daextulma_tools_menu_required_capability' ) !== null ? sanitize_key( $request->get_param( 'daextulma_tools_menu_required_capability' ) ) : null;
+		$options['daextulma_editor_markdown_parser']               = $request->get_param( 'daextulma_editor_markdown_parser' ) !== null ? sanitize_key( $request->get_param( 'daextulma_editor_markdown_parser' ) ) : null;
+		$options['daextulma_live_preview_markdown_parser']         = $request->get_param( 'daextulma_live_preview_markdown_parser' ) !== null ? sanitize_key( $request->get_param( 'daextulma_live_preview_markdown_parser' ) ) : null;
+		$options['daextulma_live_preview_php_auto_refresh']         = $request->get_param( 'daextulma_live_preview_php_auto_refresh' ) !== null ? intval( $request->get_param( 'daextulma_live_preview_php_auto_refresh' ), 10 ) : null;
+		$options['daextulma_live_preview_php_debounce_delay'] = $request->get_param( 'daextulma_live_preview_php_debounce_delay' ) !== null ? intval( $request->get_param( 'daextulma_live_preview_php_debounce_delay' ), 10 ) : null;
 
 		foreach ( $options as $key => $option ) {
 			if ( null !== $option ) {
@@ -194,4 +209,51 @@ class Daextulma_Rest {
 		return true;
 	}
 
+	/**
+	 *  Callback for the GET 'ultimate-markdown/v1/parse-markdown' endpoint of the Rest API.
+	 *
+	 * This method is used to retrieve title and content of a Markdown file based on the post ID of the post containing
+	 * the HTML content. It's used in the following contexts:
+	 *
+	 * - To export a post in Markdown format after clicking the "Export" button of the "Export Markdown" editor sidebar
+	 * section.
+	 *
+	 * @param array $request Data received from the request.
+	 *
+	 * @return void|WP_REST_Response
+	 */
+	public function rest_api_ultimate_markdown_parse_markdown_callback( $request ) {
+
+		$markdown_content = $request->get_param( 'markdown_content' ) !== null ? $request->get_param( 'markdown_content' ) : null;
+
+		// Remove the YAML part from the document.
+		$markdown_content = $this->shared->remove_yaml( $markdown_content );
+
+		// Generate HTML from text with the Markdown syntax.
+		$html_content = $this->shared->convert_markdown_to_html( $markdown_content, 'live_preview' );
+
+		if ( isset( $html_content ) ) {
+
+			return new WP_REST_Response( $html_content, 200 );
+
+		}
+	}
+
+	/**
+	 * Check the user capability.
+	 *
+	 * @return true|WP_Error
+	 */
+	public function rest_api_ultimate_markdown_parse_markdown_callback_permission_check() {
+
+		if ( ! current_user_can( get_option( $this->shared->get( 'slug' ) . '_documents_menu_required_capability' ) ) ) {
+			return new WP_Error(
+				'rest_read_error',
+				'Sorry, you are not allowed to access the parser via the Documents menu.',
+				array( 'status' => 403 )
+			);
+		}
+
+		return true;
+	}
 }

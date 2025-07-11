@@ -32,7 +32,7 @@ class Daextulma_Shared {
 	private function __construct() {
 
 		$this->data['slug'] = 'daextulma';
-		$this->data['ver']  = '1.20';
+		$this->data['ver']  = '1.21';
 		$this->data['dir']  = substr( plugin_dir_path( __FILE__ ), 0, - 7 );
 		$this->data['url']  = substr( plugin_dir_url( __FILE__ ), 0, - 7 );
 
@@ -48,6 +48,10 @@ class Daextulma_Shared {
 			// General ------------------------------------------------------------------------------------------------.
 			$this->get( 'slug' ) . '_documents_menu_required_capability' => 'edit_posts',
 			$this->get( 'slug' ) . '_tools_menu_required_capability' => 'edit_posts',
+			$this->get( 'slug' ) . '_editor_markdown_parser'      => 'marked',
+			$this->get( 'slug' ) . '_live_preview_markdown_parser'      => 'marked',
+			$this->get( 'slug' ) . '_live_preview_php_auto_refresh'      => '1',
+			$this->get( 'slug' ) . '_live_preview_php_debounce_delay'      => '1000',
 
 		);
 	}
@@ -211,7 +215,7 @@ class Daextulma_Shared {
 	 */
 	public function remove_yaml( $str ) {
 
-		return preg_replace( '/^\s*-{3}\R.+?\R-{3}/ms', '', $str );
+		return preg_replace( '/^\s*-{3}\R.*?\R-{3}/ms', '', $str );
 	}
 
 	/**
@@ -241,16 +245,32 @@ class Daextulma_Shared {
 	 * @param string $title The title of the document.
 	 * @param string $document The content of the document in Markdown syntax.
 	 * @param array  $front_matter The front matter of the document.
+	 *
+	 *  Note that wp_send_json_error() and wp_send_json_success() call wp_die() internally, so there is no need to
+	 *  call wp_die() after these functions.
 	 */
 	public function generate_markdown_document_json( $title, $document, $front_matter ) {
 
 		// Remove the YAML part from the document.
 		$markdown_data = $this->remove_yaml( $document );
 
+		// Converts the provided Markdown content to HTML.
+		$html_content = $this->convert_markdown_to_html( $markdown_data, 'editor' );
+
+		// If $front_matter includes an error, return a JSON error response.
+		if ( isset( $front_matter['error'] ) && ! empty( $front_matter['error'] ) ) {
+			wp_send_json_error(
+				array(
+					'error' => $front_matter['error'],
+				)
+			);
+		}
+
 		// Echo the HTML generated from the Markdown file.
-		echo wp_json_encode(
+		wp_send_json_success(
 			array(
 				'content'         => $markdown_data,
+				'html_content'    => $html_content,
 				'title'           => $title,
 				'excerpt'         => $front_matter['excerpt'],
 				'categories'      => $front_matter['categories'],
@@ -271,8 +291,67 @@ class Daextulma_Shared {
 
 		$configuration = array(
 			array(
-				'title'       => __( 'General', 'ultimate-markdown'),
-				'description' => __( 'Manage the plugin settings.', 'ultimate-markdown'),
+				'title'       => __( 'Conversion', 'ultimate-markdown'),
+				'description' => __( 'Customize the settings for parsing Markdown.', 'ultimate-markdown'),
+				'cards'       => array(
+					array(
+						'title'   => __( 'Markdown Parser', 'ultimate-markdown' ),
+						'options' => array(
+							array(
+								'name'          => 'daextulma_editor_markdown_parser',
+								'label'         => __( 'Editor', 'ultimate-markdown' ),
+								'type'          => 'select',
+								'tooltip'       => __(
+									'The Markdown parser used for Markdown-to-HTML conversions in the WordPress editor. More specifically, this parser is used by the following Block Editor sidebar features: Import Markdown, Load Markdown, and Submit Markdown.',
+									'ultimate-markdown'
+								),
+								'help'          => __( 'Select the Markdown parser used for conversions in the WordPress editor.', 'ultimate-markdown' ),
+								'selectOptions' => array(
+									array(
+										'value' => 'commonmark',
+										'text'  => __( 'CommonMark (PHP)', 'ultimate-markdown' ),
+									),
+									array(
+										'value' => 'commonmark_github',
+										'text'  => __( 'CommonMark GitHub (PHP)', 'ultimate-markdown' ),
+									),
+									array(
+										'value' => 'marked',
+										'text'  => __( 'Marked (JavaScript)', 'ultimate-markdown' ),
+									),
+								),
+							),
+							array(
+								'name'          => 'daextulma_live_preview_markdown_parser',
+								'label'         => __( 'Live Preview', 'ultimate-markdown' ),
+								'type'          => 'select',
+								'tooltip'       => __(
+									'The Markdown parser used to generate the live preview while editing Markdown content in the editor found in the "Documents" menu. For the fastest preview experience and low resource usage (especially important on shared servers), the "Marked" parser is recommended, as other parsers run on the server and require server communication on each update or manual refresh.',
+									'ultimate-markdown'
+								),
+								'help'          => __( 'Select the Markdown parser used for rendering the live preview in the Markdown editor.', 'ultimate-markdown' ),
+								'selectOptions' => array(
+									array(
+										'value' => 'commonmark',
+										'text'  => __( 'CommonMark (PHP)', 'ultimate-markdown' ),
+									),
+									array(
+										'value' => 'commonmark_github',
+										'text'  => __( 'CommonMark GitHub (PHP)', 'ultimate-markdown' ),
+									),
+									array(
+										'value' => 'marked',
+										'text'  => __( 'Marked (JavaScript - Recommended for Live Preview)', 'ultimate-markdown' ),
+									),
+								),
+							),
+						),
+					),
+				),
+			),
+			array(
+				'title'       => __( 'Advanced', 'ultimate-markdown'),
+				'description' => __( 'Manage advanced plugin settings.', 'ultimate-markdown'),
 				'cards'       => array(
 					array(
 						'title'   => __( 'Capabilities', 'ultimate-markdown'),
@@ -296,6 +375,35 @@ class Daextulma_Shared {
 									'ultimate-markdown'
 								),
 								'help'    => __( 'The capability required to access the "Tools" menu.', 'ultimate-markdown'),
+							),
+						),
+					),
+					array(
+						'title'   => __( 'Live Preview', 'ultimate-markdown' ),
+						'options' => array(
+							array(
+								'name'    => 'daextulma_live_preview_php_auto_refresh',
+								'label'   => __( 'Auto Refresh for PHP Live Preview', 'ultimate-markdown' ),
+								'type'    => 'toggle',
+								'tooltip' => __(
+									'When enabled, the plugin automatically updates the live preview while typing. If disabled, you must manually refresh the preview using the dedicated button. Disabling this option can reduce server load on shared or slow hosting environments. This setting applies only when a PHP-based Markdown parser is selected.',
+									'ultimate-markdown'
+								),
+								'help'    => __( 'Enables the automatic refresh of the PHP-rendered live preview when editing Markdown in the Documents editor.', 'ultimate-markdown' ),
+							),
+							array(
+								'name'    => 'daextulma_live_preview_php_debounce_delay',
+								'label'   => __( 'Debounce Delay for PHP Live Preview', 'ultimate-markdown' ),
+								'type'    => 'range',
+								'tooltip' => __(
+									'This value controls how long the plugin waits after you stop typing before sending the Markdown content to the PHP parser via REST API to update the live preview. Higher values reduce the number of server requests but may make the preview feel less responsive. This setting applies only when a PHP-based Markdown parser is selected. Example: A value of 1000 means the preview refreshes one second after typing stops.
+',
+									'ultimate-markdown'
+								),
+								'help'    => __( 'Defines the delay, in milliseconds, between typing changes and the automatic refresh of the PHP-rendered live preview in the Documents editor.', 'ultimate-markdown' ),
+								'rangeMin'  => 500,
+								'rangeMax'  => 3000,
+								'rangeStep' => 100,
 							),
 						),
 					),
@@ -447,6 +555,32 @@ class Daextulma_Shared {
 				$xml = '<svg class="untitled-ui-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M21 6H17.8C16.1198 6 15.2798 6 14.638 6.32698C14.0735 6.6146 13.6146 7.07354 13.327 7.63803C13 8.27976 13 9.11984 13 10.8V12M21 6L18 3M21 6L18 9M10 3H7.8C6.11984 3 5.27976 3 4.63803 3.32698C4.07354 3.6146 3.6146 4.07354 3.32698 4.63803C3 5.27976 3 6.11984 3 7.8V16.2C3 17.8802 3 18.7202 3.32698 19.362C3.6146 19.9265 4.07354 20.3854 4.63803 20.673C5.27976 21 6.11984 21 7.8 21H16.2C17.8802 21 18.7202 21 19.362 20.673C19.9265 20.3854 20.3854 19.9265 20.673 19.362C21 18.7202 21 17.8802 21 16.2V14" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>';
+
+				$allowed_html = array(
+					'svg'  => array(
+						'class'   => array(),
+						'width'   => array(),
+						'height'  => array(),
+						'viewbox' => array(),
+						'fill'    => array(),
+						'xmlns'   => array(),
+					),
+					'path' => array(
+						'd'               => array(),
+						'stroke'          => array(),
+						'stroke-width'    => array(),
+						'stroke-linecap'  => array(),
+						'stroke-linejoin' => array(),
+					),
+				);
+
+				break;
+
+			case 'refresh-cw-01':
+				$xml = '<svg class="untitled-ui-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M22 10C22 10 19.995 7.26822 18.3662 5.63824C16.7373 4.00827 14.4864 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.1031 21 19.5649 18.2543 20.6482 14.5M22 10V4M22 10H16" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+						';
 
 				$allowed_html = array(
 					'svg'  => array(
@@ -975,6 +1109,66 @@ class Daextulma_Shared {
 
 		return true;
 
+	}
+
+	/**
+	 * Converts the provided Markdown content to HTML. Note that the type of conversion depends on the options defined
+	 * in the back-end.
+	 *
+	 * @param string $markdown_content The Markdown content to convert to HTML.
+	 * @param string $context The context in which the conversion is performed. It can be "bulk_import", "editor", or
+	 * "live_preview". Note that the context is used to determine which Markdown parser to use for the conversion.
+	 *
+	 * @return mixed The HTML generated from the provided Markdown text.
+	 */
+	public function convert_markdown_to_html( $markdown_content, $context ) {
+
+		switch ( $context ) {
+
+			case 'editor':
+				$markdown_parser = get_option( $this->get( 'slug' ) . '_editor_markdown_parser' );
+				break;
+
+			case 'live_preview':
+				$markdown_parser = get_option( $this->get( 'slug' ) . '_live_preview_markdown_parser' );
+				break;
+
+		}
+
+		/**
+		 * If the parser is "marked" return an empty string. This is because the Marked.js parser is JavaScript-based
+		 * and, as a consequence, used on the front-end.
+		 */
+		if ( 'marked' === $markdown_parser ) {
+			return '';
+		}
+
+		// Instances of the Markdown parsers are created and saved as global variables.
+		require_once $this->get( 'dir' ) . 'globalize-md-parsers.php';
+
+		// Convert HTML to Markdown using the selected parser and options.
+		switch ( $markdown_parser ) {
+
+			case 'commonmark':
+			case 'commonmark_github':
+
+				// Get the result object.
+				if ( 'commonmark' === $markdown_parser ) {
+					global $commonmark_converter;
+					$result_obj = $commonmark_converter->convert( $markdown_content );
+				} else {
+					global $github_flavored_converter;
+					$result_obj = $github_flavored_converter->convert( $markdown_content );
+				}
+
+				// Get the HTML content.
+				$html_content = $result_obj->getContent();
+
+				break;
+
+		}
+
+		return $html_content;
 	}
 
 }

@@ -5,7 +5,7 @@
  */
 
 const {dispatch, select} = wp.data;
-const {PluginDocumentSettingPanel} = wp.editPost;
+const {PluginDocumentSettingPanel} = wp.editor;
 const {Component} = wp.element;
 const {__} = wp.i18n;
 const {Button, SelectControl} = wp.components;
@@ -33,6 +33,7 @@ export default class Sidebar extends Component {
             <PluginDocumentSettingPanel
                 name="daextulma-load-document"
                 title={__('Load Markdown', 'ultimate-markdown')}
+                className="daextulma-load-document-panel"
             >
                 <SelectControl
                     label={__('Markdown document', 'ultimate-markdown')}
@@ -55,6 +56,8 @@ export default class Sidebar extends Component {
 
                     }}
                     options={window.DAEXTULMA_PARAMETERS.documents}
+                    __nextHasNoMarginBottom={ true }
+                    __next40pxDefaultSize={ true }
                 />
 
                 <Button
@@ -82,14 +85,44 @@ export default class Sidebar extends Component {
                         fetch(window.DAEXTULMA_PARAMETERS.ajaxUrl, {
                             method: 'POST',
                             body: data,
-                        }).then(function (response) {
+                        }).then((response) => {
 
                             return response.json();
 
-                        }).then(function (data) {
+                        }).then((response) => {
+
+                            // Map known error codes to user-friendly messages.
+                            const errorMessages = {
+                                invalid_date_format: __('Invalid date format in Front Matter. Please enter a valid date, e.g. 2025-07-16, or a date and time, e.g. 2025-07-16 10:30:42.', 'ultimate-markdown'),
+                                generic_error: __('Please review your document for any formatting issues in the Front Matter or Markdown content, then try again. The content could not be processed. For more details on supported fields and formatting, please refer to the plugin documentation.', 'ultimate-markdown'),
+                            };
+
+                            // Fallback to a generic error string if the error code is not mapped.
+                            const errorMessage = errorMessages[response.data['error']] || errorMessages['generic_error'];
+
+                            /**
+                             * If response['error'] is set, it means that an error occurred. In that case we display an
+                             * error message and stop the execution.
+                             */
+                            if (response.data['error']) {
+                                // Display an error message.
+                                wp.data.dispatch('core/notices').createErrorNotice(
+                                    errorMessage,
+                                    {
+                                        type: 'snackbar',
+                                        isDismissible: true,
+                                    }
+                                );
+                                return;
+                            }
 
                             // Convert the Markdown text to HTML.
-                            let pageHtml = marked(data['content']);
+                            let pageHtml = '';
+                            if('marked' === window.DAEXTULMA_PARAMETERS.editorMarkdownParser) {
+                                pageHtml = marked(response.data['content']);
+                            }else{
+                                pageHtml = response.data['html_content'];
+                            }
 
                             // Sanitize the generated HTML.
                             pageHtml = DOMPurify.sanitize(pageHtml,
@@ -107,7 +140,27 @@ export default class Sidebar extends Component {
                             );
 
                             // Update the editor fields.
-                            updateFields(blocks, data);
+                            updateFields(blocks, response.data);
+
+                            // Reset the document selector to "Not set" (0) in meta.
+                            dispatch('core/editor').editPost({
+                                meta: {
+                                    '_import_markdown_pro_load_document_selector': '0',
+                                },
+                            });
+
+                            // Reset the document selector to "Not set" (0) in local state.
+                            this.setState({
+                                documentIdSelectorValue: '0',
+                            });
+
+                            wp.data.dispatch('core/notices').createErrorNotice(
+                                __('Markdown content successfully processed and blocks created.', 'ultimate-markdown'),
+                                {
+                                    type: 'snackbar',
+                                    isDismissible: true,
+                                }
+                            );
 
                         });
 

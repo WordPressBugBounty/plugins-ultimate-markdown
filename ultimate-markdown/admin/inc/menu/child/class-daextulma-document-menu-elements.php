@@ -72,7 +72,9 @@ class Daextulma_Document_Menu_Elements extends Daextulma_Menu_Elements {
 
 			// Main Form data.
 			$data['title']   = isset( $_POST['title'] ) ? sanitize_text_field( wp_unslash( $_POST['title'] ) ) : null;
-			$data['content'] = isset( $_POST['content'] ) ? sanitize_textarea_field( wp_unslash( $_POST['content'] ) ) : null;
+
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitization functions can't be applied to Markdown content because the Markdown syntax would be altered.
+			$data['content'] = isset( $_POST['content'] ) ? wp_unslash( $_POST['content'] ) : null;
 
 		}
 

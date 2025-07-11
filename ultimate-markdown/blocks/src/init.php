@@ -21,6 +21,15 @@ function daextulma_editor_assets() {
 	// assign an instance of Daextulma_Shared.
 	$shared = Daextulma_Shared::get_instance();
 
+	// Styles ---------------------------------------------------------------------------------------------------------.
+
+	wp_enqueue_style(
+		'daextulma-editor-css',
+		plugins_url( 'css/editor.css', __DIR__ ),
+		array( 'wp-edit-blocks' ), // Dependency to include the CSS after it.
+		$shared->get( 'ver' )
+	);
+
 	// Scripts --------------------------------------------------------------------------------------------------------.
 
 	// Block.

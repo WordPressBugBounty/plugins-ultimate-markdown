@@ -3,9 +3,9 @@ Contributors: DAEXT
 Tags: markdown, markdown editor, import markdown, export markdown, front matter
 Donate link: https://daext.com
 Requires at least: 5.0
-Tested up to: 6.8
+Tested up to: 6.8.1
 Requires PHP: 5.3
-Stable tag: 1.20
+Stable tag: 1.21
 License: GPLv3
 
 Generate block-based articles from a Markdown file, bulk import and export Markdown documents, create Markdown documents from an editor, and more.
@@ -73,6 +73,7 @@ This plugin makes use of the following resources:
 
 * [DOMPurify](https://github.com/cure53/DOMPurify) licensed under the [Apache License Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 * [Marked](https://github.com/markedjs/marked) licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php)
+* [League\CommonMark](https://github.com/thephpleague/commonmark) licensed under the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause)
 * [Composer](https://getcomposer.org/) licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php)
 * [HTML To Markdown for PHP](https://github.com/thephpleague/html-to-markdown) licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php)
 * [FrontYAML](https://github.com/mnapoli/FrontYAML) licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php)
@@ -105,6 +106,18 @@ With this procedure you will be able to perform a **Single Site Activation** in 
 3. Click on the **Activate** button (just below the name of the plugin)
 
 == Changelog ==
+
+= 1.21 =
+
+*July 11, 2025*
+
+* Added the League CommonMark and League CommonMark GitHub Markdown parsers.
+* Added Editor and Live Preview Markdown parser options.
+* The Live Preview feature in the Documents menu editor can now use PHP-based parsers.
+* Added new settings to control the behavior of the Markdown preview when using PHP parsers.
+* The block editor now shows notification messages indicating whether Front Matter and Markdown content was parsed successfully or if errors occurred.
+* The Markdown preview in the Documents menu now displays a header indicating the active Markdown parser and, if applicable, a refresh button.
+* Bug fix: Markdown code was altered in specific scenarios due to improper use of sanitize_textarea_field().
 
 = 1.20 =
 

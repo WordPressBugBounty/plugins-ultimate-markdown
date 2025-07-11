@@ -107,7 +107,7 @@ class Daextulma_Tools_Menu_Elements extends Daextulma_Menu_Elements {
 						}
 					}
 
-					$dm_notice = __( 'The following documents have been generated:', 'ultimate-markdown-pro' ) . ' ';
+					$dm_notice = __( 'The following documents have been generated:', 'ultimate-markdown' ) . ' ';
 					foreach ( $list_of_posts as $key => $post ) {
 						$dm_notice .= $post['title'];
 						if ( $key < count( $list_of_posts ) - 1 ) {
@@ -158,7 +158,7 @@ class Daextulma_Tools_Menu_Elements extends Daextulma_Menu_Elements {
 							<div class="daextulma-main-form__section-header">
 								<div class="daextulma-main-form__section-header-title">
 									<?php $this->shared->echo_icon_svg( 'log-in-04' ); ?>
-									<div class="daextulma-main-form__section-header-title-text"><?php esc_html_e( 'Import', 'ultimate-markdown-pro' ); ?></div>
+									<div class="daextulma-main-form__section-header-title-text"><?php esc_html_e( 'Import', 'ultimate-markdown' ); ?></div>
 								</div>
 							</div>
 
@@ -186,9 +186,9 @@ class Daextulma_Tools_Menu_Elements extends Daextulma_Menu_Elements {
 									<div class="daextulma-main-form__daext-form-field">
 										<div class="daextulma-input-wrapper">
 											<label for="upload"
-											       class="custom-file-upload"><?php esc_html_e( 'Choose file', 'ultimate-markdown-pro' ); ?></label>
+											       class="custom-file-upload"><?php esc_html_e( 'Choose file', 'ultimate-markdown' ); ?></label>
 											<div class="custom-file-upload-text"
-											     id="upload-text"><?php esc_html_e( 'No file chosen', 'ultimate-markdown-pro' ); ?></div>
+											     id="upload-text"><?php esc_html_e( 'No file chosen', 'ultimate-markdown' ); ?></div>
 											<input type="file" id="upload" name="file_to_upload[]"
 											       accept=".md,.markdown,.mdown,.mkdn,.mkd,.mdwn,.mdtxt,.mdtext,.text,.txt" multiple
 											       class="custom-file-upload-input">
@@ -198,7 +198,7 @@ class Daextulma_Tools_Menu_Elements extends Daextulma_Menu_Elements {
 									<div>
 										<input type="submit" name="submit" id="submit"
 										       class="daextulma-btn daextulma-btn-primary"
-										       value="<?php esc_attr_e( 'Upload files and import', 'ultimate-markdown-pro' ); ?>">
+										       value="<?php esc_attr_e( 'Upload files and import', 'ultimate-markdown' ); ?>">
 									</div>
 							</form>
 

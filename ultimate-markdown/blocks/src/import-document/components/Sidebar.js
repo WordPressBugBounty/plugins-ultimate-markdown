@@ -4,7 +4,7 @@
  * @package ultimate-markdown
  */
 
-const {PluginDocumentSettingPanel} = wp.editPost;
+const {PluginDocumentSettingPanel} = wp.editor;
 const {Component} = wp.element;
 const {__} = wp.i18n;
 const {FormFileUpload} = wp.components;
@@ -25,7 +25,7 @@ export default class Sidebar extends Component {
                         // Store the data of all the uploaded files.
                         const files = event.target.files;
 
-                        // Store the data of the first uploaded file.cd
+                        // Store the data of the first uploaded file.
                         const file = files[0];
 
                         // Send ajax request.
@@ -41,10 +41,40 @@ export default class Sidebar extends Component {
 
                             return response.json();
 
-                        }).then(function (data) {
+                        }).then(function (response) {
+
+                            // Map known error codes to user-friendly messages.
+                            const errorMessages = {
+                                invalid_date_format: __('Invalid date format in Front Matter. Please enter a valid date, e.g. 2025-07-16, or a date and time, e.g. 2025-07-16 10:30:42.', 'ultimate-markdown'),
+                                generic_error: __('Please review your document for any formatting issues in the Front Matter or Markdown content, then try again. The content could not be processed. For more details on supported fields and formatting, please refer to the plugin documentation.', 'ultimate-markdown'),
+                            };
+
+                            // Fallback to a generic error string if the error code is not mapped.
+                            const errorMessage = errorMessages[response.data['error']] || errorMessages['generic_error'];
+
+                            /**
+                             * If response['error'] is set, it means that an error occurred. In that case we display an
+                             * error message and stop the execution.
+                             */
+                            if (response.data['error']) {
+                                // Display an error message.
+                                wp.data.dispatch('core/notices').createErrorNotice(
+                                    errorMessage,
+                                    {
+                                        type: 'snackbar',
+                                        isDismissible: true,
+                                    }
+                                );
+                                return;
+                            }
 
                             // Convert the Markdown text to HTML.
-                            let pageHtml = marked(data['content']);
+                            let pageHtml = '';
+                            if('marked' === window.DAEXTULMA_PARAMETERS.editorMarkdownParser) {
+                                pageHtml = marked(response.data['content']);
+                            }else{
+                                pageHtml = response.data['html_content'];
+                            }
 
                             // Sanitize the generated HTML.
                             pageHtml = DOMPurify.sanitize(pageHtml,
@@ -62,13 +92,22 @@ export default class Sidebar extends Component {
                             );
 
                             // Update the editor fields.
-                            updateFields(blocks, data);
+                            updateFields(blocks, response.data);
+
+                            wp.data.dispatch('core/notices').createErrorNotice(
+                                __('Markdown content successfully processed and blocks created.', 'ultimate-markdown'),
+                                {
+                                    type: 'snackbar',
+                                    isDismissible: true,
+                                }
+                            );
 
                         });
 
                     }}
                     accept=".md,.markdown,.mdown,.mkdn,.mkd,.mdwn,.mdtxt,.mdtext,.text,.txt"
                     icon="insert"
+                    __next40pxDefaultSize={true}
                 >
                     {__('Upload file and import', 'ultimate-markdown')}
                 </FormFileUpload>

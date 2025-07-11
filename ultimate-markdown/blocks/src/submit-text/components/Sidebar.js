@@ -6,7 +6,7 @@
 
 const {Button, TextareaControl} = wp.components;
 const {dispatch, select} = wp.data;
-const {PluginDocumentSettingPanel} = wp.editPost;
+const {PluginDocumentSettingPanel} = wp.editor;
 const {Component} = wp.element;
 const {__} = wp.i18n;
 import {updateFields} from '../../utils';
@@ -33,6 +33,7 @@ export default class Sidebar extends Component {
             <PluginDocumentSettingPanel
                 name="submit-text"
                 title={__('Submit Markdown', 'ultimate-markdown')}
+                className="daextulma-submit-text-panel"
             >
 
 
@@ -55,6 +56,7 @@ export default class Sidebar extends Component {
                             textareaValue: value,
                         });
                     }}
+                    __nextHasNoMarginBottom={ true }
                 />
 
                 <Button
@@ -62,40 +64,24 @@ export default class Sidebar extends Component {
                     className="editor-post-trash is-destructive"
                     onClick={() => {
 
-                        // Send ajax request.
-                        const data = new FormData();
-                        data.append('action', 'daextulma_submit_markdown');
-                        data.append('security', window.DAEXTULMA_PARAMETERS.nonce);
-                        data.append('markdowntext', markdownText);
+                        wp.ajax.post('daextulma_submit_markdown', {
+                            security: window.DAEXTULMA_PARAMETERS.nonce,
+                            markdowntext: this.state.textareaValue,
+                        }).done((data) => {
 
-                        fetch(window.DAEXTULMA_PARAMETERS.ajaxUrl, {
-                            method: 'POST',
-                            body: data,
-                        }).then((response) => {
+                            let pageHtml = '';
+                            if ('marked' === window.DAEXTULMA_PARAMETERS.editorMarkdownParser) {
+                                pageHtml = marked(data['content']);
+                            } else {
+                                pageHtml = data['html_content'];
+                            }
 
-                            return response.json();
+                            pageHtml = DOMPurify.sanitize(pageHtml, { USE_PROFILES: { html: true } });
 
-                        }).then((data) => {
-
-                            // Convert the Markdown text to HTML.
-                            let pageHtml = marked(data['content']);
-
-                            // Sanitize the generated HTML.
-                            pageHtml = DOMPurify.sanitize(pageHtml,
-                                {USE_PROFILES: {html: true}});
-
-                            /**
-                             * Delete the content of the post.
-                             * See: https://wordpress.stackexchange.com/questions/305932/gutenberg-remove-add-blocks-with-custom-script
-                             */
                             wp.data.dispatch('core/block-editor').resetBlocks([]);
 
-                            // Generate the blocks from the HTML.
-                            const blocks = wp.blocks.rawHandler(
-                                {HTML: pageHtml},
-                            );
+                            const blocks = wp.blocks.rawHandler({ HTML: pageHtml });
 
-                            // Update the editor fields.
                             updateFields(blocks, data);
 
                             // Set the textarea to an empty value.
@@ -105,11 +91,34 @@ export default class Sidebar extends Component {
                                 },
                             });
 
-                            // Used to rerender the component.
                             this.setState({
                                 textareaValue: '',
                             });
 
+                            wp.data.dispatch('core/notices').createErrorNotice(
+                                __('Markdown content successfully processed and blocks created.', 'ultimate-markdown'),
+                                {
+                                    type: 'snackbar',
+                                    isDismissible: true,
+                                }
+                            );
+
+                        }).fail((data) => {
+
+                            const errorMessages = {
+                                invalid_date_format: __('Invalid date format in Front Matter. Please enter a valid date, e.g. 2025-07-16, or a date and time, e.g. 2025-07-16 10:30:42.', 'ultimate-markdown'),
+                                generic_error: __('Please review your document for any formatting issues in the Front Matter or Markdown content, then try again. The content could not be processed. For more details on supported fields and formatting, please refer to the plugin documentation.', 'ultimate-markdown'),
+                            };
+
+                            const errorMessage = errorMessages[data['error']] || errorMessages['generic_error'];
+
+                            wp.data.dispatch('core/notices').createErrorNotice(
+                                errorMessage,
+                                {
+                                    type: 'snackbar',
+                                    isDismissible: true,
+                                }
+                            );
                         });
 
                     }}

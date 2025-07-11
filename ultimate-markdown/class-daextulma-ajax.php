@@ -107,7 +107,6 @@ class Daextulma_Ajax {
 
 		}
 
-		die();
 	}
 
 	/**
@@ -160,7 +159,6 @@ class Daextulma_Ajax {
 
 		}
 
-		die();
 	}
 
 	/**
@@ -185,7 +183,11 @@ class Daextulma_Ajax {
 			die();
 		}
 
-		$content = isset( $_POST['markdowntext'] ) ? sanitize_textarea_field( wp_unslash( $_POST['markdowntext'] ) ) : '';
+		/**
+		 * Get raw markdown content, without sanitize_textarea_field(). This is because sanitize_textarea_field() is not
+		 * applicable to the Markdown content, as it would remove or alter some of the Markdown syntax.
+		 */
+		$content = isset( $_POST['markdowntext'] ) ? wp_unslash( $_POST['markdowntext'] ) : '';
 
 		// Get the Front Matter data.
 		$front_matter = $this->front_matter->get( $content );
@@ -196,6 +198,5 @@ class Daextulma_Ajax {
 		// Echo the JSON data associated with the Markdown document.
 		$this->shared->generate_markdown_document_json( $title, $content, $front_matter );
 
-		die();
 	}
 }

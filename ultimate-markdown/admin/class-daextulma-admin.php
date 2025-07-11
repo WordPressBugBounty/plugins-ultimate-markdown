@@ -314,6 +314,7 @@ class Daextulma_Admin {
 					'jquery-ui-dialog',
 					$this->shared->get( 'slug' ) . '-marked',
 					$this->shared->get( 'slug' ) . '-dompurify',
+					'wp-api-fetch'
 				),
 				$this->shared->get( 'ver' ),
 				true
@@ -328,6 +329,9 @@ class Daextulma_Admin {
 			// Store the JavaScript parameters in the window.DAEXTULMA_PARAMETERS object.
 			$initialization_script  = 'window.DAEXTULMA_PARAMETERS = {';
 			$initialization_script .= 'adminUrl: "' . admin_url() . '",';
+			$initialization_script .= 'livePreviewMarkdownParser: "' . get_option('daextulma_live_preview_markdown_parser') . '",';
+			$initialization_script .= 'livePreviewPhpAutoRefresh: ' . (1 === intval(get_option('daextulma_live_preview_php_auto_refresh')) ? 'true' : 'false') . ',';
+			$initialization_script .= 'livePreviewPhpDebounceDelay: "' . get_option('daextulma_live_preview_php_debounce_delay') . '"';
 			$initialization_script .= '};';
 
 			wp_add_inline_script( $this->shared->get( 'slug' ) . '-menu-documents', $initialization_script, 'before' );
@@ -417,6 +421,7 @@ class Daextulma_Admin {
 			$initialization_script .= 'documents: ' . wp_json_encode( $document_a_alt ) . ',';
 			$initialization_script .= 'ajaxUrl: "' . admin_url( 'admin-ajax.php' ) . '",';
 			$initialization_script .= 'pluginDirectoryUrl: "' . $this->shared->get( 'url' ) . '",';
+			$initialization_script .= 'editorMarkdownParser: "' . get_option('daextulma_editor_markdown_parser') . '",';
 			$initialization_script .= 'nonce: "' . wp_create_nonce( 'daextulma' ) . '",';
 			$initialization_script .= '};';
 			wp_add_inline_script( $this->shared->get( 'slug' ) . '-editor-js', $initialization_script, 'before' );
@@ -572,7 +577,7 @@ class Daextulma_Admin {
 	 */
 	public static function ac_initialize_options() {
 
-		if ( intval( get_option( 'daextulma_options_version' ), 10 ) < 1 ) {
+		if ( intval( get_option( 'daextulma_options_version' ), 10 ) < 2 ) {
 
 			// assign an instance of Daextulma_Shared.
 			$shared = Daextulma_Shared::get_instance();
@@ -582,7 +587,7 @@ class Daextulma_Admin {
 			}
 
 			// Update options version.
-			update_option( 'daextulma_options_version', '1' );
+			update_option( 'daextulma_options_version', '2' );
 
 		}
 	}

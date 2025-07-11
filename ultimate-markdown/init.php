@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Ultimate Markdown
  * Description: A set of tools that helps you work with the Markdown language.
- * Version: 1.20
+ * Version: 1.21
  * Author: DAEXT
  * Author URI: https://daext.com
  * Text Domain: ultimate-markdown

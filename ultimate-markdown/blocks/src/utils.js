@@ -92,6 +92,12 @@ export function updateFields(blocks, data) {
     // Insert the blocks in the editor.
     wp.data.dispatch('core/block-editor').insertBlocks(blocks);
 
+    // Clear selection so the Block tab doesn't stay active.
+    wp.data.dispatch('core/block-editor').clearSelectedBlock();
+
+    // Force the sidebar back to "Post" section.
+    wp.data.dispatch('core/edit-post').openGeneralSidebar('edit-post/document');
+
     // Update the post title.
     if (data['title'] !== null) {
         wp.data.dispatch('core/editor').editPost({title: data['title']});

@@ -48,8 +48,12 @@ class Daextulma_Front_Matter {
 			$data = array();
 		}
 
-		// Sanitize and prepare the YAML data.
-		$data = $this->prepare_fields( $data );
+		try {
+			// Sanitize and prepare the YAML data.
+			$data = $this->prepare_fields( $data );
+		} catch ( Exception $e ) {
+			$data = array( 'error' => $e->getMessage() );
+		}
 
 		return $data;
 	}
@@ -259,9 +263,13 @@ class Daextulma_Front_Matter {
 			return null;
 		}
 
+		if ( !is_numeric( $date ) || (int) $date != $date ) {
+			throw new Exception( 'invalid_date_format' );
+		}
+
 		/**
 		 * Note that the FrontYaml convert the date available in the string in the 'Y-m-d h:i:s' format to a unix date.
-		 * As a consequence the date here is reconverted to the 'Y-m-d h:i:s' format with the PHP date() function.
+		 * As a consequence, the date here is reconverted to the 'Y-m-d h:i:s' format with the PHP date() function.
 		 */
 		$date = gmdate( 'Y-m-d h:i:s', $date );
 
