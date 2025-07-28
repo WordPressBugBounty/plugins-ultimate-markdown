@@ -3,9 +3,9 @@ Contributors: DAEXT
 Tags: markdown, markdown editor, import markdown, export markdown, front matter
 Donate link: https://daext.com
 Requires at least: 5.0
-Tested up to: 6.8.1
+Tested up to: 6.8.2
 Requires PHP: 5.3
-Stable tag: 1.21
+Stable tag: 1.22
 License: GPLv3
 
 Generate block-based articles from a Markdown file, bulk import and export Markdown documents, create Markdown documents from an editor, and more.
@@ -106,6 +106,13 @@ With this procedure you will be able to perform a **Single Site Activation** in 
 3. Click on the **Activate** button (just below the name of the plugin)
 
 == Changelog ==
+
+= 1.22 =
+
+*July 28, 2025*
+
+* Improved normalization of front matter date field during Markdown imports in the block editor.
+* Bug fix: Categories and tags in the block editor are now correctly updated based on the imported front matter data.
 
 = 1.21 =
 

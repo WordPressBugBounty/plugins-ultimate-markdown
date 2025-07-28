@@ -5,43 +5,6 @@
  */
 
 /**
- * Add a category and refresh the panel.
- *
- * See: https://stackoverflow.com/questions/69983604/changing-a-posts-tag-category-from-a-wordpress-gutenberg-sidebar-plugin/70029499#70029499
- *
- * @param category
- * @constructor
- */
-export function AddCategory(category) {
-
-    const {dispatch, select} = wp.data;
-
-    // Get Current Selected Categories.
-    let categories = select('core/editor').getEditedPostAttribute('categories');
-
-    // Get State of Category Panel.
-    let is_category_panel_open = select('core/edit-post').isEditorPanelOpened('taxonomy-panel-category');
-
-    // Verify new category isn't already selected.
-    if (!categories.includes(category)) {
-
-        // Add new tag to existing list.
-        categories.push(category);
-
-        // Update Post with new tags.
-        dispatch('core/editor').editPost({'categories': categories});
-
-        // Verify if the category panel is open.
-        if (is_category_panel_open) {
-
-            // Close and re-open the category panel to reload data / refresh the UI.
-            dispatch('core/edit-post').toggleEditorPanelOpened('taxonomy-panel-category');
-            dispatch('core/edit-post').toggleEditorPanelOpened('taxonomy-panel-category');
-        }
-    }
-}
-
-/**
  * Add the tag and refresh the panel.
  *
  * See: https://stackoverflow.com/questions/69983604/changing-a-posts-tag-category-from-a-wordpress-gutenberg-sidebar-plugin/70029499#70029499
@@ -110,16 +73,14 @@ export function updateFields(blocks, data) {
 
     // Update the categories.
     if (data['categories'] !== null) {
-        data['categories'].forEach((category) => {
-            AddCategory(category);
-        });
+        // Replace all categories with the new ones.
+        dispatch('core/editor').editPost({ categories: data['categories'] });
     }
 
     // Update the tags.
     if (data['tags'] !== null) {
-        data['tags'].forEach((tag) => {
-            AddTag(tag);
-        });
+        // Replace all tags with the new ones.
+        dispatch('core/editor').editPost({ tags: data['tags'] });
     }
 
     // Update the author.

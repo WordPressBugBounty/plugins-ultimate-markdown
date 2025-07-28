@@ -251,9 +251,9 @@ class Daextulma_Front_Matter {
 
 
 	/**
-	 * If the date is valid returns it, otherwise returns null.
+	 * If the date is valid, returns it as a string in 'Y-m-d H:i:s' format. Otherwise returns null.
 	 *
-	 * @param string $date A date in 'Y-m-d h:i:s' format.
+	 * @param mixed $date
 	 *
 	 * @return string|null
 	 */
@@ -263,22 +263,40 @@ class Daextulma_Front_Matter {
 			return null;
 		}
 
-		if ( !is_numeric( $date ) || (int) $date != $date ) {
+		/**
+		 * The FrontYAML parser (Mni\FrontYAML\Parser::getYAML()) behaves inconsistently
+		 * when parsing the `date` field:
+		 *
+		 * - If the date is written as an unquoted string like `date: 2025-07-25 10:06:15`,
+		 *   the parser automatically converts it into a UNIX timestamp (integer).
+		 *
+		 * - If the date is written as a quoted string like `date: '2025-07-25 10:06:15'`,
+		 *   the parser preserves it as a plain string.
+		 *
+		 * This inconsistency requires preprocessing to ensure all dates are normalized
+		 * to the 'Y-m-d H:i:s' string format.
+		 */
+
+		// If it's a DateTime object (less common, but possible), format it to string.
+		if ( $date instanceof DateTimeInterface ) {
+			$date = $date->format( 'Y-m-d H:i:s' );
+		}
+
+		// If it's a numeric UNIX timestamp (due to unquoted YAML date), convert to string format.
+		elseif ( is_numeric( $date ) && (int) $date == $date ) {
+			$date = gmdate( 'Y-m-d H:i:s', (int) $date );
+		}
+
+		// At this point, we expect $date to be a string in 'Y-m-d H:i:s' format.
+		if ( !is_string( $date ) ) {
 			throw new Exception( 'invalid_date_format' );
 		}
 
-		/**
-		 * Note that the FrontYaml convert the date available in the string in the 'Y-m-d h:i:s' format to a unix date.
-		 * As a consequence, the date here is reconverted to the 'Y-m-d h:i:s' format with the PHP date() function.
-		 */
-		$date = gmdate( 'Y-m-d h:i:s', $date );
+		// Validate the final date string format using a strict 24-hour regex.
+		$date_regex = '/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\s([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/';
 
-		// Validate the date with a regex.
-		$date_regex = '/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])\s([0-6][0-9]|[0-9]):([0-6][0-9]|[0-9]):([0-6][0-9]|[0-9])$/';
-		if ( preg_match( $date_regex, $date ) ) {
-			$date = $date;
-		} else {
-			$date = null;
+		if ( !preg_match( $date_regex, $date ) ) {
+			return null;
 		}
 
 		return $date;
