@@ -32,7 +32,7 @@ class Daextulma_Shared {
 	private function __construct() {
 
 		$this->data['slug'] = 'daextulma';
-		$this->data['ver']  = '1.22';
+		$this->data['ver']  = '1.23';
 		$this->data['dir']  = substr( plugin_dir_path( __FILE__ ), 0, - 7 );
 		$this->data['url']  = substr( plugin_dir_url( __FILE__ ), 0, - 7 );
 
@@ -215,7 +215,7 @@ class Daextulma_Shared {
 	 */
 	public function remove_yaml( $str ) {
 
-		return preg_replace( '/^\s*-{3}\R.*?\R-{3}/ms', '', $str );
+		return preg_replace( '/^\s*-{3}\R.+?\R-{3}/s', '', $str );
 	}
 
 	/**

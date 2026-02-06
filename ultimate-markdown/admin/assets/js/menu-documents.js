@@ -65,7 +65,7 @@ jQuery( document ).ready(
 			 * Remove the YAML data available at the beginning of the document (Front
 			 * Matter)
 			 */
-			const textWithoutFrontMatter = textareaValue.replace( /^\s*-{3}\r?\n.*?\r?\n-{3}/ms, '');
+			const textWithoutFrontMatter = textareaValue.replace( /^\s*-{3}\r?\n.*?\r?\n-{3}/s, '');
 
 			// Generate the HTML from the Markdown content.
 			const content = marked( textWithoutFrontMatter );
