@@ -4,7 +4,7 @@
  * @package ultimate-markdown
  */
 
-const {Button, TextareaControl} = wp.components;
+const {Button, TextareaControl, BaseControl} = wp.components;
 const {dispatch, select} = wp.data;
 const {PluginDocumentSettingPanel} = wp.editor;
 const {Component} = wp.element;
@@ -32,16 +32,18 @@ export default class Sidebar extends Component {
         return (
             <PluginDocumentSettingPanel
                 name="submit-text"
-                title={__('Submit Markdown', 'ultimate-markdown')}
+                title={__('Insert Markdown', 'ultimate-markdown')}
                 className="daextulma-submit-text-panel"
             >
-
-
-                <TextareaControl
-                    label={__('Markdown text', 'ultimate-markdown')}
+                <BaseControl
                     help={__(
-                        'Enter the Markdown text, then click the submit text button to generate the corresponding blocks.',
-                        'ultimate-markdown')}
+                        'Inserts the Markdown above into the editor.',
+                        'ultimate-markdown'
+                    )}
+                    __nextHasNoMarginBottom={ true }
+                >
+                <TextareaControl
+                    label={__('Markdown', 'ultimate-markdown')}
                     value={markdownText}
                     onChange={(value) => {
 
@@ -122,8 +124,8 @@ export default class Sidebar extends Component {
                         });
 
                     }}
-                >{__('Submit text', 'ultimate-markdown')}</Button>
-
+                >{__('Insert', 'ultimate-markdown')}</Button>
+                </BaseControl>
             </PluginDocumentSettingPanel>
         );
     }

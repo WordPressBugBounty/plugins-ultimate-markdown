@@ -3,9 +3,9 @@ Contributors: DAEXT
 Tags: markdown, markdown editor, import markdown, export markdown, front matter
 Donate link: https://daext.com
 Requires at least: 5.0
-Tested up to: 6.9
+Tested up to: 6.9.1
 Requires PHP: 5.3
-Stable tag: 1.23
+Stable tag: 1.24
 License: GPLv3
 
 Generate block-based articles from a Markdown file, bulk import and export Markdown documents, create Markdown documents from an editor, and more.
@@ -15,13 +15,13 @@ Ultimate Markdown is a plugin for WordPress that allows you to create WordPress 
 
 Specifically, after installing the plugin, you will be able to:
 
-* Create posts with perfectly formatted blocks from existing Markdown files or Markdown documents created with the plugin.
-* Instantly generate blocks from Markdown text.
-* Create and manage an unlimited number of Markdown documents in a dedicated plugin menu.
-* Import Markdown file in WordPress.
+* Create posts from Markdown files or Markdown documents created with the plugin.
+* Convert Markdown text to blocks directly in the post editor.
+* Create and manage Markdown documents in a dedicated plugin menu.
+* Import Markdown files into WordPress.
 * Create archives of Markdown files from the Markdown documents created with the plugin.
 
-Please note that this plugin requires the use of the default [WordPress Blocks Editor](https://wordpress.org/support/article/blocks/). With third-party visual editors or with the [Classic Editor](https://wordpress.org/plugins/classic-editor/), you will not be able to use most of the plugin functionalities.
+The plugin integrates with both the Block Editor and the Classic Editor. The Markdown tools are available in the post editor sidebar when using the Block Editor and as meta boxes when using the Classic Editor.
 
 ### Pro Version
 
@@ -39,7 +39,7 @@ This section allows you to generate the blocks of a post from an uploaded Markdo
 
 Use this feature to create the blocks of a post from a Markdown document previously created with the plugin.
 
-#### Submit Markdown
+#### Insert Markdown
 
 With this section, you can instantly transform Markdown text to blocks.
 
@@ -51,7 +51,7 @@ This menu includes a Markdown editor with an HTML preview section. In addition, 
 
 #### Import
 
-Import one or more Markdown files in the plugin with the upload form provided in this menu.
+Import one or more Markdown files into the plugin with the upload form provided in this menu.
 
 #### Export
 
@@ -59,7 +59,10 @@ With this menu, you can generate Markdown files from the Markdown documents stor
 
 ### Supported Markdown syntax
 
-The conversion from Markdown text to HTML is performed with [Marked](https://github.com/markedjs/marked), a high-performance Markdown parser that supports documents written in the following [Markdown flavors](https://github.com/commonmark/commonmark-spec/wiki/Markdown-Flavors).
+The plugin can convert Markdown text to HTML using the following parsers:
+
+* [Marked](https://github.com/markedjs/marked), a high-performance JavaScript Markdown parser and compiler.
+* [League\CommonMark](https://github.com/thephpleague/commonmark), a PHP Markdown parser that supports both the CommonMark and GitHub Flavored Markdown variants.
 
 ### Front Matter
 
@@ -69,13 +72,12 @@ Please see the [plugin documentation](https://daext.com/doc/ultimate-markdown/) 
 
 ### Credits
 
-This plugin makes use of the following resources:
+This plugin includes the following third-party libraries:
 
 * [DOMPurify](https://github.com/cure53/DOMPurify) licensed under the [Apache License Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 * [Marked](https://github.com/markedjs/marked) licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php)
 * [League\CommonMark](https://github.com/thephpleague/commonmark) licensed under the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause)
 * [Composer](https://getcomposer.org/) licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php)
-* [HTML To Markdown for PHP](https://github.com/thephpleague/html-to-markdown) licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php)
 * [FrontYAML](https://github.com/mnapoli/FrontYAML) licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php)
 
 == Installation ==
@@ -106,6 +108,15 @@ With this procedure you will be able to perform a **Single Site Activation** in 
 3. Click on the **Activate** button (just below the name of the plugin)
 
 == Changelog ==
+
+= 1.24 =
+
+*March 8, 2026*
+
+* The post editor tools added by the plugin are now also available as meta boxes in the Classic Editor.
+* Improved the UI of the Block Editor tools.
+* Updating the post status via front matter is now restricted to valid statuses.
+* The plugin now checks if the user has the "edit_posts" capability before showing the block editor tools or meta boxes.
 
 = 1.23 =
 
@@ -237,7 +248,7 @@ With this procedure you will be able to perform a **Single Site Activation** in 
 == Screenshots ==
 1. Import Markdown section in the post sidebar.
 2. Load Markdown section in the post sidebar.
-3. Submit Markdown section in the post sidebar.
+3. Insert Markdown section in the post sidebar.
 4. A single document.
 5. List of documents.
 6. Tools menu.

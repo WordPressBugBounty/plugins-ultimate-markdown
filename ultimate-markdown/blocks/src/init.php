@@ -18,6 +18,11 @@ if ( ! defined( 'WPINC' ) ) {
  */
 function daextulma_editor_assets() {
 
+	// Check capability before loading block editor assets.
+	if ( ! current_user_can( 'edit_posts' ) ) {
+		return;
+	}
+
 	// assign an instance of Daextulma_Shared.
 	$shared = Daextulma_Shared::get_instance();
 
@@ -40,6 +45,20 @@ function daextulma_editor_assets() {
 		$shared->get( 'ver' ),
 		true // Enqueue the script in the footer.
 	);
+
+	// Get the documents used to populate the selector in the "Load Document" block editor sidebar section.
+	$document_a_alt = $shared->get_documents_for_selector();
+
+	// Store the JavaScript parameters in the window.DAEXTULMA_PARAMETERS object.
+	$initialization_script  = 'window.DAEXTULMA_PARAMETERS = {';
+	$initialization_script .= 'documents: ' . wp_json_encode( $document_a_alt ) . ',';
+	$initialization_script .= 'ajaxUrl: "' . admin_url( 'admin-ajax.php' ) . '",';
+	$initialization_script .= 'pluginDirectoryUrl: "' . $shared->get( 'url' ) . '",';
+	$initialization_script .= 'editorMarkdownParser: "' . get_option('daextulma_editor_markdown_parser') . '",';
+	$initialization_script .= 'nonce: "' . wp_create_nonce( 'daextulma' ) . '",';
+	$initialization_script .= '};';
+	wp_add_inline_script( $shared->get( 'slug' ) . '-editor-js', $initialization_script, 'before' );
+
 }
 
 /**

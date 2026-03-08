@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Ultimate Markdown
  * Description: A set of tools that helps you work with the Markdown language.
- * Version: 1.23
+ * Version: 1.24
  * Author: DAEXT
  * Author URI: https://daext.com
  * Text Domain: ultimate-markdown
@@ -46,6 +46,10 @@ if ( is_admin() ) {
 	if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 		add_action( 'plugins_loaded', array( 'Daextulma_Admin', 'get_instance' ) );
 	}
+
+	// Load meta boxes.
+	require_once plugin_dir_path( __FILE__ ) . 'admin/inc/class-daextulma-meta-boxes.php';
+	add_action( 'plugins_loaded', array( 'Daextulma_Meta_Boxes', 'get_instance' ) );
 
 	// Activate the plugin using only the class static methods.
 	register_activation_hook( __FILE__, array( 'Daextulma_Admin', 'ac_activate' ) );

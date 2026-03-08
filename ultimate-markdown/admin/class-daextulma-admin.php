@@ -388,43 +388,14 @@ class Daextulma_Admin {
 
 		// Remove the "attachment" post type.
 		$available_post_types_a = array_diff( $available_post_types_a, array( 'attachment' ) );
+
+		/**
+		 * Enqueue Marked and DOMPurify only for post types with a UI.
+		 *
+		 * These libraries are required by the three block editor sidebar sections and by the three classic editor meta
+		 * boxes.
+		 */
 		if ( in_array( $screen->id, $available_post_types_a, true ) ) {
-
-			/**
-			 * When the editor file is loaded (only in the post editor) add the names and IDs of all the documents as
-			 * json data in a property of the window.DAEXTULMA_PARAMETERS object.
-			 *
-			 * These data are used to populate the "Select Document" selector available in the post sidebar.
-			 */
-			global $wpdb;
-
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$document_a = $wpdb->get_results(
-				"SELECT document_id, title FROM {$wpdb->prefix}daextulma_document ORDER BY document_id DESC",
-				ARRAY_A
-			);
-
-			$document_a_alt   = array();
-			$document_a_alt[] = array(
-				'value' => 0,
-				'label' => __( 'Not set', 'ultimate-markdown' ),
-			);
-			foreach ( $document_a as $value ) {
-				$document_a_alt[] = array(
-					'value' => intval( $value['document_id'], 10 ),
-					'label' => stripslashes( $value['title'] ),
-				);
-			}
-
-			// Store the JavaScript parameters in the window.DAEXTULMA_PARAMETERS object.
-			$initialization_script  = 'window.DAEXTULMA_PARAMETERS = {';
-			$initialization_script .= 'documents: ' . wp_json_encode( $document_a_alt ) . ',';
-			$initialization_script .= 'ajaxUrl: "' . admin_url( 'admin-ajax.php' ) . '",';
-			$initialization_script .= 'pluginDirectoryUrl: "' . $this->shared->get( 'url' ) . '",';
-			$initialization_script .= 'editorMarkdownParser: "' . get_option('daextulma_editor_markdown_parser') . '",';
-			$initialization_script .= 'nonce: "' . wp_create_nonce( 'daextulma' ) . '",';
-			$initialization_script .= '};';
-			wp_add_inline_script( $this->shared->get( 'slug' ) . '-editor-js', $initialization_script, 'before' );
 
 			// Marked.
 			wp_enqueue_script(

@@ -8,7 +8,7 @@ const {dispatch, select} = wp.data;
 const {PluginDocumentSettingPanel} = wp.editor;
 const {Component} = wp.element;
 const {__} = wp.i18n;
-const {Button, SelectControl} = wp.components;
+const {Button, SelectControl, BaseControl} = wp.components;
 import {updateFields} from '../../utils';
 
 export default class Sidebar extends Component {
@@ -35,11 +35,15 @@ export default class Sidebar extends Component {
                 title={__('Load Markdown', 'ultimate-markdown')}
                 className="daextulma-load-document-panel"
             >
-                <SelectControl
-                    label={__('Markdown document', 'ultimate-markdown')}
+                <BaseControl
                     help={__(
-                        'Select a Markdown document, then click the submit document button to generate the corresponding blocks.',
-                        'ultimate-markdown')}
+                        'Loads the selected Markdown document into the editor.',
+                        'ultimate-markdown'
+                    )}
+                    __nextHasNoMarginBottom={ true }
+                >
+                <SelectControl
+                    label={__('Document', 'ultimate-markdown')}
                     value={documentIdSelectorMeta}
                     onChange={(document_id) => {
 
@@ -71,7 +75,7 @@ export default class Sidebar extends Component {
                         const meta = select('core/editor').getEditedPostAttribute('meta');
                         const document_id = meta['_import_markdown_pro_load_document_selector'];
 
-                        // Do not proceed if the selected option is "Not set".
+                        // Do not proceed if the selected option is "Select a document…".
                         if (parseInt(document_id, 10) === 0) {
                             return;
                         }
@@ -142,14 +146,14 @@ export default class Sidebar extends Component {
                             // Update the editor fields.
                             updateFields(blocks, response.data);
 
-                            // Reset the document selector to "Not set" (0) in meta.
+                            // Reset the document selector to "Select a document…" (0) in meta.
                             dispatch('core/editor').editPost({
                                 meta: {
                                     '_import_markdown_pro_load_document_selector': '0',
                                 },
                             });
 
-                            // Reset the document selector to "Not set" (0) in local state.
+                            // Reset the document selector to "Select a document…" (0) in local state.
                             this.setState({
                                 documentIdSelectorValue: '0',
                             });
@@ -165,8 +169,8 @@ export default class Sidebar extends Component {
                         });
 
                     }}
-                >{__('Submit document', 'ultimate-markdown')}</Button>
-
+                >{__('Load', 'ultimate-markdown')}</Button>
+                </BaseControl>
             </PluginDocumentSettingPanel>
         );
     }

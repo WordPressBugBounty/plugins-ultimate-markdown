@@ -32,7 +32,7 @@ class Daextulma_Shared {
 	private function __construct() {
 
 		$this->data['slug'] = 'daextulma';
-		$this->data['ver']  = '1.23';
+		$this->data['ver']  = '1.24';
 		$this->data['dir']  = substr( plugin_dir_path( __FILE__ ), 0, - 7 );
 		$this->data['url']  = substr( plugin_dir_url( __FILE__ ), 0, - 7 );
 
@@ -1169,6 +1169,38 @@ class Daextulma_Shared {
 		}
 
 		return $html_content;
+	}
+
+	/**
+	 * Get the list of documents formatted for the selector used in the "Load Document" block editor sidebar section and
+	 * in the "Load Document" meta box.
+	 *
+	 * @return array
+	 */
+	public function get_documents_for_selector() {
+
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$document_a = $wpdb->get_results(
+				"SELECT document_id, title FROM {$wpdb->prefix}daextulma_document ORDER BY document_id DESC",
+				ARRAY_A
+		);
+
+		$document_a_alt   = array();
+		$document_a_alt[] = array(
+				'value' => 0,
+				'label' => __( 'Select a document…', 'ultimate-markdown' ),
+		);
+
+		foreach ( $document_a as $value ) {
+			$document_a_alt[] = array(
+					'value' => intval( $value['document_id'], 10 ),
+					'label' => stripslashes( $value['title'] ),
+			);
+		}
+
+		return $document_a_alt;
 	}
 
 }

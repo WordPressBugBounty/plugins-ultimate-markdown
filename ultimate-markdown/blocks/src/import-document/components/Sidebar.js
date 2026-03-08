@@ -7,7 +7,7 @@
 const {PluginDocumentSettingPanel} = wp.editor;
 const {Component} = wp.element;
 const {__} = wp.i18n;
-const {FormFileUpload} = wp.components;
+const {FormFileUpload, BaseControl} = wp.components;
 import {updateFields} from '../../utils';
 
 export default class Sidebar extends Component {
@@ -18,6 +18,13 @@ export default class Sidebar extends Component {
                 name="daextulma-import-document"
                 title={__('Import Markdown', 'ultimate-markdown')}
             >
+                <BaseControl
+                    help={__(
+                        'Uploads a Markdown file and imports its content into the editor.',
+                        'ultimate-markdown'
+                    )}
+                    __nextHasNoMarginBottom={ true }
+                >
                 <FormFileUpload
                     className="block-library-gallery-add-item-button"
                     onChange={() => {
@@ -111,6 +118,7 @@ export default class Sidebar extends Component {
                 >
                     {__('Upload file and import', 'ultimate-markdown')}
                 </FormFileUpload>
+                </BaseControl>
             </PluginDocumentSettingPanel>
         );
     }

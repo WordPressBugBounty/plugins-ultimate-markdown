@@ -93,8 +93,31 @@ export function updateFields(blocks, data) {
         wp.data.dispatch('core/editor').editPost({date: data['date']});
     }
 
-    // Update the status.
-    if (data['status'] !== null) {
+    /**
+     *
+     * Update the post status.
+     *
+     * WordPress internally supports several statuses (publish, draft, pending,
+     * future, private, trash, auto-draft, inherit, etc.). However, only a limited subset of these statuses can be
+     * safely using the provided front matter value.
+     *
+     *  - publish  → Published
+     *  - draft    → Draft
+     *  - pending  → Pending Review
+     *  - private  → Private
+     *  - future   → Scheduled
+     *
+     * Other statuses such as "trash", "auto-draft", or "inherit" are controlled by other mechanisms (e.g. trash
+     * actions, internal WordPress logic) and should not be set.
+     *
+     * Note that the 'future' status (scheduled) doesn't actually need a publishing date, because if the date is not
+     * set in the future, WordPress will automatically change the status to 'publish' when the post is saved. If instead
+     * a future date is set, WordPress will keep the 'future' status and publish the post at the scheduled date.
+     *
+     * @type {string[]}
+     */
+    const allowedStatuses = ['publish', 'draft', 'pending', 'private', 'future'];
+    if (data['status'] !== null && data.status !== undefined && allowedStatuses.includes(data.status)) {
         wp.data.dispatch('core/editor').editPost({status: data['status']});
     }
 
