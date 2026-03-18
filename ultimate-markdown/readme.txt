@@ -5,7 +5,7 @@ Donate link: https://daext.com
 Requires at least: 5.0
 Tested up to: 6.9.1
 Requires PHP: 5.3
-Stable tag: 1.24
+Stable tag: 1.25
 License: GPLv3
 
 Generate block-based articles from a Markdown file, bulk import and export Markdown documents, create Markdown documents from an editor, and more.
@@ -108,6 +108,13 @@ With this procedure you will be able to perform a **Single Site Activation** in 
 3. Click on the **Activate** button (just below the name of the plugin)
 
 == Changelog ==
+
+= 1.25 =
+
+*Mar 18, 2026*
+
+* The Pro version upgrade banner previously displayed at the bottom of all plugin menu pages is now shown only in the Options menu.
+* Added a notices manager class used to display documentation resources and a link to rate the plugin. A related action hook has also been introduced to allow notices to be rendered in a specific area of the plugin UI.
 
 = 1.24 =
 

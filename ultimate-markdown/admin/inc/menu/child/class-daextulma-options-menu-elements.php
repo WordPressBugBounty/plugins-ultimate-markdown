@@ -43,5 +43,9 @@ class Daextulma_Options_Menu_Elements extends Daextulma_Menu_Elements {
 		</div>
 
 		<?php
+
+		// Display the Pro features section.
+		$this->display_pro_features();
+
 	}
 }

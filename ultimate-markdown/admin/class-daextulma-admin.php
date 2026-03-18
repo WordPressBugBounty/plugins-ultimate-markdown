@@ -659,6 +659,10 @@ class Daextulma_Admin {
 		foreach ( $shared->get( 'options' ) as $key => $value ) {
 			delete_option( $key );
 		}
+
+		// Delete the option used by the DAEXT_Notices_Manager class to persist the notices state.
+		delete_option( $shared->get( 'slug' ) . '_notices_state' );
+
 	}
 
 	/**
