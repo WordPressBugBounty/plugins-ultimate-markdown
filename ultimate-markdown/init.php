@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Ultimate Markdown
  * Description: A set of tools that helps you work with the Markdown language.
- * Version: 1.25
+ * Version: 1.26
  * Author: DAEXT
  * Author URI: https://daext.com
  * Text Domain: ultimate-markdown
@@ -46,7 +46,7 @@ require_once __DIR__ . '/inc/daext-notices-manager/class-daext-notices-manager.p
 DAEXT_Notices_Manager::get_instance( [
 	'plugin_slug'        => 'ultimate-markdown',
 	'plugin_file'        => __FILE__,
-	'docs_url'           => 'https://daext.com/doc/ultimate-markdown/',
+	'docs_url'           => 'https://daext.com/kb/ultimate-markdown/quick-start-guide/',
 	'review_url'         => 'https://wordpress.org/support/plugin/ultimate-markdown/reviews/#new-post',
 	'plugin_prefix'      => 'daextulma',
 	'settings_screen_id' => 'markdown_page_daextulma-options',

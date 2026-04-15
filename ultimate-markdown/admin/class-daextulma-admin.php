@@ -744,7 +744,7 @@ class Daextulma_Admin {
 			esc_html__( 'Help & Support', 'ultimate-markdown' ),
 			esc_html__( 'Help & Support', 'ultimate-markdown' ) . '<i class="dashicons dashicons-external" style="font-size:12px;vertical-align:-2px;height:10px;"></i>',
 			'manage_options',
-			'https://daext.com/doc/ultimate-markdown/',
+			'https://daext.com/kb/ultimate-markdown/',
 		);
 	}
 

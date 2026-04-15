@@ -3,115 +3,97 @@ Contributors: DAEXT
 Tags: markdown, markdown editor, import markdown, export markdown, front matter
 Donate link: https://daext.com
 Requires at least: 5.0
-Tested up to: 6.9.1
+Tested up to: 6.9.4
 Requires PHP: 5.3
-Stable tag: 1.25
+Stable tag: 1.26
 License: GPLv3
 
-Generate block-based articles from a Markdown file, bulk import and export Markdown documents, create Markdown documents from an editor, and more.
+Generate articles from a Markdown file, bulk import and export Markdown documents, create Markdown documents from an editor, and more.
 
 == Description ==
-Ultimate Markdown is a plugin for WordPress that allows you to create WordPress posts with the popular Markdown syntax.
+Ultimate Markdown helps you speed up your writing workflow. Create, import, and export Markdown with tools designed for faster publishing and automation.
 
-Specifically, after installing the plugin, you will be able to:
+The plugin offers multiple ways to work with Markdown. After installing it, you can:
 
-* Create posts from Markdown files or Markdown documents created with the plugin.
+* Create posts from Markdown files or internal Markdown documents.
 * Convert Markdown text to blocks directly in the post editor.
 * Create and manage Markdown documents in a dedicated plugin menu.
 * Import Markdown files into WordPress.
-* Create archives of Markdown files from the Markdown documents created with the plugin.
+* Export Markdown documents from the internal library as ZIP archives.
 
-The plugin integrates with both the Block Editor and the Classic Editor. The Markdown tools are available in the post editor sidebar when using the Block Editor and as meta boxes when using the Classic Editor.
+We distribute the [Pro version](https://daext.com/ultimate-markdown/) of this plugin, which includes additional import and export options, automatic image uploads during import, REST API support for automation, additional Markdown parsers (7 options), extended Front Matter support, document categories, and more. See the [feature comparison](https://daext.com/ultimate-markdown/#features) for a detailed overview.
 
-### Pro Version
+### Getting Started
 
-We distribute the [Pro version](https://daext.com/ultimate-markdown/) of this plugin that includes more export options, REST API, additional Markdown parsers, document categories, and more.
+To quickly understand how the plugin works, start with the guide below:
 
-### Additional post sidebar sections
+* [Quick Start Guide](https://daext.com/kb/ultimate-markdown/quick-start-guide/)
 
-The plugin adds the following sections to the post sidebar.
+### Using the Editor Panels
 
-#### Import Markdown
+Ultimate Markdown adds dedicated panels to the post editor:
 
-This section allows you to generate the blocks of a post from an uploaded Markdown file.
+- [Import Markdown](https://daext.com/kb/ultimate-markdown/import-markdown-files-in-the-post-editor/) – Upload a Markdown file and convert it into post content
+- [Load Markdown](https://daext.com/kb/ultimate-markdown/load-documents-in-the-post-editor/) – Generate post content from documents stored in the plugin's internal library
+- [Insert Markdown](https://daext.com/kb/ultimate-markdown/insert-markdown-in-the-post-editor/) – Paste or type Markdown text and convert it instantly
 
-#### Load Markdown
+The plugin integrates with both the Block Editor and the Classic Editor. The editor panels are available in the post editor sidebar when using the Block Editor and as meta boxes when using the Classic Editor.
 
-Use this feature to create the blocks of a post from a Markdown document previously created with the plugin.
+### Managing Markdown Documents
 
-#### Insert Markdown
+Manage your Markdown content directly within the plugin using a dedicated menu.
 
-With this section, you can instantly transform Markdown text to blocks.
-
-### Dedicated plugin menus
-
-#### Documents
-
-This menu includes a Markdown editor with an HTML preview section. In addition, you will find functionalities to create, edit, duplicate or delete your Markdown documents.
-
-#### Import
-
-Import one or more Markdown files into the plugin with the upload form provided in this menu.
-
-#### Export
-
-With this menu, you can generate Markdown files from the Markdown documents stored in the plugin.
-
-### Supported Markdown syntax
-
-The plugin can convert Markdown text to HTML using the following parsers:
-
-* [Marked](https://github.com/markedjs/marked), a high-performance JavaScript Markdown parser and compiler.
-* [League\CommonMark](https://github.com/thephpleague/commonmark), a PHP Markdown parser that supports both the CommonMark and GitHub Flavored Markdown variants.
+- [Documents Overview](https://daext.com/kb/ultimate-markdown/introduction-to-managing-documents/) – Learn how to create, edit, and organize your Markdown documents
 
 ### Front Matter
 
-The plugin supports Front Matter key-value pairs provided in the [YAML](https://yaml.org/) language. With this feature, you can configure specific post settings by providing their values at the beginning of the Markdown document.
+The plugin supports Front Matter key-value pairs provided in the YAML language. With this feature, you can configure post settings by defining key-value pairs at the beginning of the Markdown document.
 
-Please see the [plugin documentation](https://daext.com/doc/ultimate-markdown/) for more information on the available Front Matter keys and practical examples.
+See the [Using Front Matter](https://daext.com/kb/ultimate-markdown/using-front-matter-in-the-plugin/) guide for available keys and practical examples.
 
-### Credits
+### Bulk Import and Export
 
-This plugin includes the following third-party libraries:
+Use the dedicated menu to import one or more Markdown files and store them as documents in the internal library.
 
-* [DOMPurify](https://github.com/cure53/DOMPurify) licensed under the [Apache License Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)
-* [Marked](https://github.com/markedjs/marked) licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php)
-* [League\CommonMark](https://github.com/thephpleague/commonmark) licensed under the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause)
-* [Composer](https://getcomposer.org/) licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php)
-* [FrontYAML](https://github.com/mnapoli/FrontYAML) licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php)
+You can also export the Markdown documents created within the plugin as downloadable files.
+
+### Learn More
+
+Want to explore the plugin in more detail? See the full documentation:
+
+* [Plugin Documentation](https://daext.com/kb/ultimate-markdown/)
 
 == Installation ==
-= Installation (Single Site) =
 
-With this procedure you will be able to install the Ultimate Markdown plugin on your WordPress website:
+1. Upload the plugin files to the `/wp-content/plugins/ultimate-markdown/` directory, or install the plugin through the WordPress Plugins screen directly.
+2. Activate the plugin through the Plugins screen in WordPress.
 
-1. Visit the **Plugins -> Add New** menu
-2. Click on the **Upload Plugin** button and select the zip file you just downloaded
-3. Click on **Install Now**
-4. Click on **Activate Plugin**
+### 1. Start Using the Editor Panels
 
-= Installation (Multisite) =
+Go to the post editor and use the editor panels to create content from Markdown files, internal documents, or Markdown text.
 
-This plugin supports both a **Network Activation** (the plugin will be activated on all the sites of your WordPress Network) and a **Single Site Activation** in a **WordPress Network** environment (your plugin will be activated on a single site of the network).
+### 2. Manage your Markdown Documents
 
-With this procedure you will be able to perform a **Network Activation**:
+Go to **Markdown → Documents** to create and manage your Markdown documents.
+For bulk import and export of Markdown files to and from the internal library, use **Markdown → Tools**.
 
-1. Visit the **Plugins -> Add New** menu
-2. Click on the **Upload Plugin** button and select the zip file you just downloaded
-3. Click on **Install Now**
-4. Click on **Network Activate**
+### 3. Configure the Plugin Options
 
-With this procedure you will be able to perform a **Single Site Activation** in a **WordPress Network** environment:
+Go to **Markdown → Options** to configure the plugin settings. For example, you can choose the Markdown parser used in the editor panels and document preview, along with other advanced options.
 
-1. Visit the specific site of the **WordPress Network** where you want to install the plugin
-2. Visit the **Plugins** menu
-3. Click on the **Activate** button (just below the name of the plugin)
+For detailed guidance and advanced configuration, visit the [official Knowledge Base](https://daext.com/kb/ultimate-markdown/).
 
 == Changelog ==
 
+= 1.26 =
+
+*April 15, 2026*
+
+* Updated links to the Quick Start Guide and plugin documentation.
+
 = 1.25 =
 
-*Mar 18, 2026*
+*March 18, 2026*
 
 * The Pro version upgrade banner previously displayed at the bottom of all plugin menu pages is now shown only in the Options menu.
 * Added a notices manager class used to display documentation resources and a link to rate the plugin. A related action hook has also been introduced to allow notices to be rendered in a specific area of the plugin UI.
