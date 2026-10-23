@@ -2,9 +2,9 @@
 Contributors: DAEXT
 Tags: markdown, markdown editor, import markdown, export markdown, front matter
 Donate link: https://daext.com
-Requires at least: 5.0
-Tested up to: 7.0
-Requires PHP: 5.3
+Requires at least: 6.6
+Tested up to: 7.1
+Requires PHP: 7.4
 Stable tag: 1.26
 License: GPLv3
 
