@@ -229,10 +229,13 @@ class Daextulma_Front_Matter {
 			return null;
 		}
 
-		// If the user is provided with a valid ID return its ID.
-		if ( $this->shared->user_id_exists( $value ) ) {
+		/**
+		 * If the user is provided with a valid ID return its ID. Only values made of digits are considered IDs, so a
+		 * value like "1abc" isn't interpreted as the user ID 1.
+		 */
+		if ( ctype_digit( (string) $value ) && $this->shared->user_id_exists( intval( $value, 10 ) ) ) {
 
-			return $value;
+			return intval( $value, 10 );
 
 		} else {
 

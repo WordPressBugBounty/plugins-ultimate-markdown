@@ -21,6 +21,9 @@ class Daextulma_Options_Menu_Elements extends Daextulma_Menu_Elements {
 
 		parent::__construct( $shared, $page_query_param, $config );
 
+		// The capability required to access the menu and to perform its actions.
+		$this->capability = 'manage_options';
+
 		$this->menu_slug      = 'options';
 		$this->slug_plural    = 'options';
 		$this->label_singular = __( 'Options', 'ultimate-markdown');

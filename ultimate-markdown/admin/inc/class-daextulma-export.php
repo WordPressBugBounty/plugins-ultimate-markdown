@@ -109,79 +109,69 @@ class Daextulma_Export {
 	 */
 	private function generate_zip_with_markdown_files( $document_a ) {
 
-		// Export Documents -------------------------------------------------------------------------------------------.
-		$written_file_names = array();
-		$archive_file_name = 'data-' . time() . '.zip';
-		$file_path         = WP_CONTENT_DIR . '/uploads/daextulma_uploads/';
-
-		// Create the upload directory of the plugin if the directory doesn't exist.
-		wp_mkdir_p( $file_path );
-
-		// If there are data iterate the array.
-		if ( count( $document_a ) > 0 ) {
-
-			// Renames the items with a duplicate name.
-			$document_a = $this->shared->rename_duplicate_names_in_document( $document_a );
-
-			// Add all the files in the upload folder.
-			foreach ( $document_a as $document ) {
-
-				$file_name    = sanitize_file_name( $document['title'] . '.md' );
-
-				global $wp_filesystem;
-				require_once ABSPATH . '/wp-admin/includes/file.php';
-				WP_Filesystem();
-
-				// Create the single markdown file in the plugin upload folder.
-				$content = $document['content'];
-
-				/**
-				 * If a file with the same name already exists, add a suffix "[counter]" to the file name and try
-				 * again.
-				 */
-				$counter = 0;
-				while ( $wp_filesystem->exists( $file_path . '/' . $file_name ) ) {
-					++$counter;
-					$file_name = sanitize_file_name( $document['title'] ) . $counter .  '.md';
-				}
-
-				$wp_filesystem->put_contents( $file_path . '/' . $file_name, $content );
-				$written_file_names[] = $file_name;
-
-			}
-
-			// Create and open a new zip archive.
-			$zip = new ZipArchive();
-			if ( $zip->open( $archive_file_name, ZIPARCHIVE::CREATE ) !== true ) {
-				die( 'cannot open ' . esc_html( $archive_file_name ) );
-			}
-
-			// Add each files of the $file_name array to the archive.
-			foreach ( $written_file_names as $files ) {
-				$zip->addFile( $file_path . $files, $files );
-			}
-			$zip->close();
-
-			// Generate the header of a zip file.
-			header( 'Content-type: application/zip' );
-			header( 'Content-Disposition: attachment; filename=' . $archive_file_name );
-			header( 'Pragma: no-cache' );
-			header( 'Expires: 0' );
-
-			global $wp_filesystem;
-			require_once ABSPATH . '/wp-admin/includes/file.php';
-			WP_Filesystem();
-
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Not necessary for zip files.
-			echo $wp_filesystem->get_contents( $archive_file_name );
-
-			// Delete all the files used to create the archive.
-			foreach ( $written_file_names as $written_file_name ) {
-				wp_delete_file( $file_path . $written_file_name );
-			}
-		} else {
+		// If there are no documents there is nothing to export.
+		if ( count( $document_a ) === 0 ) {
 			return false;
 		}
+
+		if ( ! class_exists( 'ZipArchive' ) ) {
+			wp_die( esc_html__( 'The export requires the PHP Zip extension, which is not available on this server.', 'ultimate-markdown' ) );
+		}
+
+		// Renames the items with a duplicate name.
+		$document_a = $this->shared->rename_duplicate_names_in_document( $document_a );
+
+		/**
+		 * Build the archive in the server temporary directory, using a file with a random name. The archive is never
+		 * stored in a publicly accessible directory (like the current working directory, which is usually wp-admin/),
+		 * and it's deleted at the end of the request, including when the request ends early because of an error or
+		 * because the download is interrupted.
+		 */
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		$archive_path = wp_tempnam( 'daextulma-export' );
+		register_shutdown_function( 'wp_delete_file', $archive_path );
+
+		// Create and open a new zip archive. OVERWRITE is required because wp_tempnam() creates an empty file.
+		$zip = new ZipArchive();
+		if ( true !== $zip->open( $archive_path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
+			wp_die( esc_html__( 'The ZIP archive could not be created.', 'ultimate-markdown' ) );
+		}
+
+		/**
+		 * Add one Markdown file for each document. The content is added directly from memory, so no intermediate
+		 * files are written to disk.
+		 */
+		$used_file_names = array();
+		foreach ( $document_a as $document ) {
+
+			$file_name = sanitize_file_name( $document['title'] . '.md' );
+
+			// If a file with the same name is already in the archive, add a suffix "[counter]" to the file name.
+			$counter = 0;
+			while ( isset( $used_file_names[ $file_name ] ) ) {
+				++$counter;
+				$file_name = sanitize_file_name( $document['title'] ) . $counter . '.md';
+			}
+			$used_file_names[ $file_name ] = true;
+
+			$zip->addFromString( $file_name, $document['content'] );
+
+		}
+
+		if ( ! $zip->close() ) {
+			wp_die( esc_html__( 'The ZIP archive could not be created.', 'ultimate-markdown' ) );
+		}
+
+		// Generate the header of a zip file.
+		header( 'Content-type: application/zip' );
+		header( 'Content-Disposition: attachment; filename="data-' . time() . '.zip"' );
+		header( 'Content-Length: ' . filesize( $archive_path ) );
+		header( 'Pragma: no-cache' );
+		header( 'Expires: 0' );
+
+		// Send the archive to the browser. The archive is then deleted by the shutdown function registered above.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile -- Streams a local temporary file created by ZipArchive.
+		readfile( $archive_path );
 
 		die();
 	}

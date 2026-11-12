@@ -32,7 +32,7 @@ class Daextulma_Shared {
 	private function __construct() {
 
 		$this->data['slug'] = 'daextulma';
-		$this->data['ver']  = '1.26';
+		$this->data['ver']  = '1.27';
 		$this->data['dir']  = substr( plugin_dir_path( __FILE__ ), 0, - 7 );
 		$this->data['url']  = substr( plugin_dir_url( __FILE__ ), 0, - 7 );
 
@@ -232,11 +232,8 @@ class Daextulma_Shared {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->users WHERE ID = %d", $user ) );
 
-		if ( 1 === $count ) {
-			return true;
-		} else {
-			return false;
-		}
+		// $wpdb->get_var() returns the value as a string, so it's cast to integer before the strict comparison.
+		return 1 === intval( $count, 10 );
 	}
 
 	/**

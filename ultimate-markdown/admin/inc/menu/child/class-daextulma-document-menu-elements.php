@@ -21,6 +21,9 @@ class Daextulma_Document_Menu_Elements extends Daextulma_Menu_Elements {
 
 		parent::__construct( $shared, $page_query_param, $config );
 
+		// The capability required to access the menu and to perform its actions.
+		$this->capability = get_option( $this->shared->get( 'slug' ) . '_documents_menu_required_capability' );
+
 		$this->menu_slug          = 'document';
 		$this->slug_plural        = 'documents';
 		$this->label_singular     = 'Document';
@@ -52,6 +55,9 @@ class Daextulma_Document_Menu_Elements extends Daextulma_Menu_Elements {
 
 		if ( isset( $_POST['update_id'] ) ||
 			isset( $_POST['form_submitted'] ) ) {
+
+			// Verify user capability.
+			$this->verify_user_capability();
 
 			// Nonce verification.
 			check_admin_referer( 'daextulma_create_update_' . $this->menu_slug, 'daextulma_create_update_' . $this->menu_slug . '_nonce' );

@@ -265,12 +265,6 @@ class DAEXT_Notices_Manager {
 			)
 		);
 
-		wp_enqueue_style(
-			'daextpnm-plugin-notices',
-			plugins_url( 'assets/css/admin-notices.css', __FILE__ ),
-			array(),
-			$this->version
-		);
 	}
 
 	/**
@@ -423,7 +417,7 @@ class DAEXT_Notices_Manager {
 		echo '<div class="daextpnm-notice-actions">';
 
 		// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
-		echo '<a class="button button-primary daextpnm-button" target="_blank" href="' . esc_url( $this->docs_url ) . '">' . esc_html__( 'View quick start guide', $this->plugin_slug ) . '</a> ';
+		echo '<a class="daextpnm-button" target="_blank" href="' . esc_url( $this->docs_url ) . '">' . esc_html__( 'View quick start guide', $this->plugin_slug ) . '</a> ';
 
 		// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
 		echo '<a href="#" class="daextpnm-dismiss-doc daextpnm-button-link" data-plugin="' . esc_attr( $this->plugin_slug ) . '">' . esc_html__( 'Dismiss', $this->plugin_slug ) . '</a>';
@@ -494,10 +488,10 @@ class DAEXT_Notices_Manager {
 		echo '<div class="daextpnm-notice-actions">';
 
 		// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
-		echo '<a class="button button-primary daextpnm-button" target="_blank" href="' . esc_url( $this->review_url ) . '">' . esc_html__( 'Rate now', $this->plugin_slug ) . '</a> ';
+		echo '<a class="daextpnm-button" target="_blank" href="' . esc_url( $this->review_url ) . '">' . esc_html__( 'Rate now', $this->plugin_slug ) . '</a> ';
 
 		// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
-		echo '<a href="#" class="daextpnm-review-later button daextpnm-button daextpnm-button-secondary" data-plugin="' . esc_attr( $this->plugin_slug ) . '">' . esc_html__( 'Remind me later', $this->plugin_slug ) . '</a>';
+		echo '<a href="#" class="daextpnm-review-later daextpnm-button daextpnm-button-secondary" data-plugin="' . esc_attr( $this->plugin_slug ) . '">' . esc_html__( 'Remind me later', $this->plugin_slug ) . '</a>';
 
 		// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
 		echo '<a href="#" class="daextpnm-review-never daextpnm-button-link" data-plugin="' . esc_attr( $this->plugin_slug ) . '">' . esc_html__( 'Never show again', $this->plugin_slug ) . '</a>';

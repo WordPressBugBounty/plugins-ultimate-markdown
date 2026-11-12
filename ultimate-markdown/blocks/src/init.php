@@ -23,6 +23,19 @@ function daextulma_editor_assets() {
 		return;
 	}
 
+	/**
+	 * Load the assets only in the post editor (post.php and post-new.php).
+	 *
+	 * The "enqueue_block_editor_assets" hook also fires in the Site Editor, in the block-based Widgets screen, and in
+	 * the Customizer. The editor panels of the plugin work with posts, and they can't work in these contexts. For
+	 * example, templates don't have the post meta used by the panels, and the Marked and DOMPurify libraries are
+	 * loaded only in the post editor.
+	 */
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	if ( null === $screen || 'post' !== $screen->base ) {
+		return;
+	}
+
 	// assign an instance of Daextulma_Shared.
 	$shared = Daextulma_Shared::get_instance();
 
@@ -61,16 +74,8 @@ function daextulma_editor_assets() {
 
 }
 
-/**
- * Enable the editor assets only in the posts and not in the widgets.php page.
- *
- * Enabling the assets in the widgets.php page would cause errors because the post editor sidebar is not available in
- * the Widget area.
- */
-global $pagenow;
-if ( 'widgets.php' !== $pagenow ) {
-	add_action( 'enqueue_block_editor_assets', 'daextulma_editor_assets' );
-}
+// Enqueue the editor assets. Note that daextulma_editor_assets() loads them only in the post editor.
+add_action( 'enqueue_block_editor_assets', 'daextulma_editor_assets' );
 
 /**
  * Register the meta fields used in the components of the post sidebar.

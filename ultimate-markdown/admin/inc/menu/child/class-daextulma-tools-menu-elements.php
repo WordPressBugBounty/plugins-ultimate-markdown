@@ -28,6 +28,9 @@ class Daextulma_Tools_Menu_Elements extends Daextulma_Menu_Elements {
 
 		parent::__construct( $shared, $page_query_param, $config );
 
+		// The capability required to access the menu and to perform its actions.
+		$this->capability = get_option( $this->shared->get( 'slug' ) . '_tools_menu_required_capability' );
+
 		$this->menu_slug      = 'tool';
 		$this->slug_plural    = 'tools';
 		$this->label_singular = __( 'Tool', 'ultimate-markdown');
@@ -55,6 +58,9 @@ class Daextulma_Tools_Menu_Elements extends Daextulma_Menu_Elements {
 
 		// Process the Markdown file upload (import) ------------------------------------------------------------------.
 		if ( isset( $_FILES['file_to_upload'] ) ) {
+
+			// Verify user capability.
+			$this->verify_user_capability();
 
 			// Nonce verification.
 			check_admin_referer( 'daextulma_tools_import', 'daextulma_tools_import_nonce' );

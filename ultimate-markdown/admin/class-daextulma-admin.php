@@ -94,6 +94,12 @@ class Daextulma_Admin {
 		// Require and instantiate the related classes used to handle the menus.
 		add_action( 'init', array( $this, 'handle_menus' ) );
 
+		// Replace the WordPress admin footer text on the plugin pages.
+		add_filter( 'admin_footer_text', array( $this, 'custom_admin_footer_text' ) );
+
+		// Remove the WordPress version from the admin footer on the plugin pages.
+		add_filter( 'update_footer', array( $this, 'custom_admin_footer_version' ), 11 );
+
 	}
 
 	/**
@@ -676,6 +682,59 @@ class Daextulma_Admin {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$wpdb->query( "DROP TABLE {$wpdb->prefix}daextulma_document" );
+	}
+
+	/**
+	 * Determine whether the current screen is one of the plugin's admin pages.
+	 *
+	 * @return bool
+	 */
+	private function is_plugin_admin_page() {
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return false;
+		}
+		return in_array(
+			$screen->id,
+			array( $this->screen_id_documents, $this->screen_id_tools, $this->screen_id_options ),
+			true
+		);
+	}
+
+	/**
+	 * Replace the admin footer text with a custom message on the plugin pages.
+	 *
+	 * @param string $text The default footer text.
+	 *
+	 * @return string
+	 */
+	public function custom_admin_footer_text( $text ) {
+		if ( ! $this->is_plugin_admin_page() ) {
+			return $text;
+		}
+		return sprintf(
+			/* translators: %s: plugin name link */
+			esc_html__( 'Thank you for using %s', 'ultimate-markdown' ),
+			'<a href="https://daext.com/ultimate-markdown/" target="_blank" rel="noopener noreferrer">Ultimate Markdown</a>'
+		);
+	}
+
+	/**
+	 * Remove the WordPress version string from the admin footer on the plugin pages.
+	 *
+	 * @param string $text The default footer version text.
+	 *
+	 * @return string
+	 */
+	public function custom_admin_footer_version( $text ) {
+		if ( ! $this->is_plugin_admin_page() ) {
+			return $text;
+		}
+		return sprintf(
+			/* translators: %s: plugin version */
+			esc_html__( 'Version %s', 'ultimate-markdown' ),
+			esc_html( $this->shared->get( 'ver' ) )
+		);
 	}
 
 	/**

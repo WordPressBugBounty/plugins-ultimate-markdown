@@ -360,7 +360,7 @@ class Daextulma_Menu_Elements {
 							</select>
 							<?php wp_nonce_field( 'daextulma_bulk_action_' . $this->menu_slug, 'daextulma_bulk_action_' . $this->menu_slug . '_nonce' ); ?>
 							<input id="bulk-action-selected-items" type="hidden" name="bulk-action-selected-items" value="">
-							<input id="daextulma-submit-bulk-action" type="submit" class="button daextulma-admin-page-button" value="<?php esc_html_e( 'Apply', 'ultimate-markdown'); ?>">
+							<input id="daextulma-submit-bulk-action" type="submit" class="daextulma-admin-page-button" value="<?php esc_html_e( 'Apply', 'ultimate-markdown'); ?>">
 						</form>
 					</div>
 
@@ -1134,6 +1134,9 @@ class Daextulma_Menu_Elements {
 		// clone an item.
 		if ( ! is_null( $data['clone_id'] ) ) {
 
+			// Verify user capability.
+			$this->verify_user_capability();
+
 			// Nonce verification.
 			check_admin_referer( 'daextulma_clone_' . $this->menu_slug . '_' . $data['clone_id'], 'daextulma_clone_' . $this->menu_slug . '_nonce' );
 
@@ -1162,6 +1165,9 @@ class Daextulma_Menu_Elements {
 
 		// delete an item.
 		if ( ! is_null( $data['delete_id'] ) ) {
+
+			// Verify user capability.
+			$this->verify_user_capability();
 
 			// Nonce verification.
 			check_admin_referer( 'daextulma_delete_' . $this->menu_slug . '_' . $data['delete_id'], 'daextulma_clone_' . $this->menu_slug . '_nonce' );
@@ -1230,6 +1236,9 @@ class Daextulma_Menu_Elements {
 			);
 
 			if ( ! is_null( $delete_id ) ) {
+
+				// Verify user capability.
+				$this->verify_user_capability();
 
 				// Nonce verification.
 				check_admin_referer( 'daextulma_bulk_action_' . $this->menu_slug, 'daextulma_bulk_action_' . $this->menu_slug . '_nonce' );
@@ -1603,7 +1612,7 @@ class Daextulma_Menu_Elements {
 					<input type="hidden" name="page" value="daextulma-<?php echo esc_attr( $this->slug_plural ); ?>">
 					<input class="daextulma-crud-table-search-form__post-search-input" type="text" name="s"
 							value="<?php echo null !== $post_search_input ? esc_attr( stripslashes( $post_search_input ) ) : ''; ?>" autocomplete="off" maxlength="255">
-					<input class="button daextulma-admin-page-button" type="submit" value="Search <?php echo esc_attr( $this->label_plural ); ?>">
+					<input class="daextulma-admin-page-button" type="submit" value="Search <?php echo esc_attr( $this->label_plural ); ?>">
 
 				</div>
 

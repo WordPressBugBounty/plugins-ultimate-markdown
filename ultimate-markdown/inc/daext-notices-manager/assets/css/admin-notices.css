@@ -9,12 +9,12 @@
  * library.
  */
 .daextpnm-notice {
-	border: 1px solid #e5e5e5;
 	padding: 12px 20px;
 	margin: 24px 32px 0;
-	background: #fff;
+	background: var(--neutral-grey-0);
 	position: relative;
 	border-radius: 8px;
+	box-shadow: var(--elevation-1);
 }
 
 .daextpnm-notice p {
@@ -24,10 +24,6 @@
 
 .daextpnm-notice strong {
 	font-weight: 600;
-}
-
-.daextpnm-notice a {
-	margin-right: 10px;
 }
 
 .daextpnm-notice-actions {
@@ -45,13 +41,12 @@
 }
 
 .daextpnm-button {
-	background: #0783be !important;
-	border-color: #0783be !important;
-	color: #fff !important;
-	height: 32px !important;
+	background: var(--color-style-primary-600) !important;
+	color: var(--neutral-grey-0) !important;
+	height: 22px !important;
 	line-height: 22px !important;
 	padding: 4px 12px !important;
-	border: 1px solid rgba(29, 40, 58, .2) !important;
+	border: 1px solid var(--color-style-primary-700) !important;
 	font-size: 13px !important;
 	border-radius: 6px !important;
 	text-decoration: none !important;
@@ -60,27 +55,34 @@
 }
 
 .daextpnm-button:hover {
-	background: #066998 !important;
-	border-color: #066998 !important;
+	background: var(--color-style-primary-700) !important;
+	border-color: var(--color-style-primary-700) !important;
 }
 
+.daextpnm-button:focus{
+	@include focus-filled;
+}
 
 .daextpnm-button-secondary {
-	color: #2271b1 !important;
-	border-color: #2271b1 !important;
-	background: #f6f7f7 !important;
+	color: var(--color-style-primary-800) !important;
+	border-color: var(--color-style-primary-800) !important;
+	background: var(--color-style-neutral-50) !important;
 }
 
 .daextpnm-button-secondary:hover {
-	background: #f0f0f1 !important;
-	border-color: #0a4b78 !important;
-	color: #0a4b78 !important;
+	background: var(--neutral-grey-150) !important;
+	border-color: var(--color-style-primary-900) !important;
+	color: var(--color-style-primary-900) !important;
+}
+
+.daextpnm-button-secondary:focus {
+	@include focus-ring;
 }
 
 .daextpnm-button-link {
-	color: #2271b1 !important;
+	color: var(--color-style-primary-700) !important;
 }
 
 .daextpnm-button-link:hover {
-	color: #0a4b78 !important;
+	color: var(--color-style-primary-900) !important;
 }
